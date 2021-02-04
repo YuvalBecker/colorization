@@ -140,3 +140,4 @@ if __name__ == '__main__':
     train_g.data_prepare(tensorboard_path='./runnow/', batch_size = 8)
     train_g.define_model(lr_dis=1e-7,lr_gen=1.5e-7)
     train_g.train(save_folder='/mnt/dota/dota/Temp/temp/')
+    #
