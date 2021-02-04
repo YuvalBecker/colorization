@@ -17,7 +17,7 @@ class Gan_train():
         self.optimizerD = None
         self.optimizerG = None
 
-    def data_prepare(self, tensorboard_path: str = './run_finit_iters77100/',
+    def data_prepare(self, tensorboard_path: str = './runnow/',
                      batch_size: int = 8):
         self.writer = SummaryWriter(tensorboard_path)
         composed = transforms.Compose([ToTensor()])
@@ -26,7 +26,7 @@ class Gan_train():
         self.dataloader = DataLoader(self.data_set, batch_size=self.batch_size,
                                 shuffle=True, num_workers=1)
 
-    def define_model(self, lr_dis: float = 1e-6, lr_gen: float = 1e-6,
+    def define_model(self, lr_dis: float = 3e-7, lr_gen: float = 4e-7,
                      pretrained_path: list = None,):
         self.netD = Discriminator(ngpu=1).cuda()
         self.netD.apply(weights_init)
@@ -42,8 +42,8 @@ class Gan_train():
             self.gen.load_state_dict(Gen_state_dict)
             self.netD.load_state_dict(D_state_dict)
 
-    def train(self, num_epochs: int = 4,
-              weight_vec: np.ndarray = [1e-4, 1e-12, 1e-12]):
+    def train(self, num_epochs: int = 2,
+              weight_vec: np.ndarray = [1e-4, 1e-12, 1e-12], save_folder='/mnt/dota/dota/Temp/temp/'):
         Mse_w = weight_vec[0]
         TV_w = weight_vec[1]
         a_b_variation_w = weight_vec[2]
@@ -122,7 +122,7 @@ class Gan_train():
                     plt.figure(2)
 
                     plt.imshow(np.transpose(np.squeeze(
-                        (data['image_grey'][1, :, :, :, :])/255 ), (1,2,0) ))
+                        (data['image_grey'][1, :, :, :, :])/255), (1, 2, 0)))
                     plt.pause(1)
 
                 # Save Losses for plotting later
@@ -130,13 +130,13 @@ class Gan_train():
                 D_losses.append(errD.item())
 
                 if (iters % 100 == 0) or ((epoch == num_epochs-1) and (i == len(self.dataloader)-1)):
-                    torch.save(self.gen.state_dict(), './model_gen' + str(iters))
-                    torch.save(self.netD.state_dict(), './model_disc' + str(iters))
+                    torch.save(self.gen.state_dict(), save_folder+'/model_gen' + str(iters))
+                    torch.save(self.netD.state_dict(), save_folder+'./model_disc' + str(iters))
                 iters += 1
 
 
 if __name__ == '__main__':
     train_g = Gan_train()
-    train_g.data_prepare()
-    train_g.define_model()
-    train_g.train()
+    train_g.data_prepare(tensorboard_path='./runnow/', batch_size = 8)
+    train_g.define_model(lr_dis=1e-7,lr_gen=1.5e-7)
+    train_g.train(save_folder='/mnt/dota/dota/Temp/temp/')
