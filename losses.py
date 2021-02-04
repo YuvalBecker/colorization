@@ -1,13 +1,5 @@
 import torch
 
-
-#def custom_loss_binary(y_pred1, y_pred2):
-#    return torch.mean(torch.abs((y_pred1) * y_pred2 + (1 - y_pred2) * (1 - y_pred1)) )
-#
-#def custom_loss_binary(y_pred1, y_pred2):
-#    return torch.mean(1/torch.abs((y_pred1 - y_pred2)) )
-
-
 def custom_loss_binary(y_pred1, y_pred2):
     return torch.mean(torch.abs(y_pred1) * torch.abs(y_pred2) + 1/y_pred1**2 +1/y_pred2**2 )
 
